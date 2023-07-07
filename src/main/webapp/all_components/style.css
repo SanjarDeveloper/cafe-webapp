@@ -1,0 +1,37 @@
+.bg-custom{
+    background: #283593 !important;
+}
+
+.navbar .nav-item .nav-link {
+    font-size: 20px;
+    color: white;
+}
+
+.navbar .nav-item .nav-link:hover {
+    color: black !important;
+    font-weight: bold;
+    background: white;
+    border-radius: 10px;
+}
+.center-img {
+    position: relative;
+    text-align: center;
+    color: white;
+    margin: 0 0;
+
+}
+.text-center {
+    position: relative;
+}
+
+div.img img{
+    width: 100px ;
+}
+
+.center {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
