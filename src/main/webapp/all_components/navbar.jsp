@@ -35,7 +35,7 @@
             </c:if>
             <c:if test="${empty userobj}" >
                 <a href="login.jsp" class="btn btn-light mr-1"><i class="fas fa-sign-in-alt"></i>Sign in</a>
-                <a href="sgnup.jsp" class="btn btn-light"><i class="fas fa-user"></i>Sign Up</a>
+                <a href="signup.jsp" class="btn btn-light"><i class="fas fa-user"></i>Sign Up</a>
             </c:if>
         </form>
     </div>
