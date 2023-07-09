@@ -5,6 +5,10 @@ import com.example.cafewebapp.Entity.Users;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccessDAO {
     public boolean registerUser(Users user) {
@@ -26,5 +30,26 @@ public class AccessDAO {
             e.printStackTrace();
         }
         return isSuccess;
+    }
+
+    public List<Users> getAllUsers(){
+        List<Users> users = new ArrayList<>();
+        try{
+            Connection connection = DBConnect.getConn();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
+            while (resultSet.next()){
+                Users user = new Users();
+                user.setId(resultSet.getInt(1));
+                user.setUser_type(resultSet.getString(2));
+                user.setUsername(resultSet.getString(3));
+                user.setPassword(resultSet.getString(4));
+                user.setActive(resultSet.getBoolean(5));
+                users.add(user);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return users;
     }
 }

@@ -10,13 +10,15 @@ import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 @WebServlet(name = "SignUpServlet", value = "/register")
 public class SignUpServlet extends HttpServlet {
     int userId = 0;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("signup.jsp").forward(request,response);
+        getServletContext().getRequestDispatcher("signup.jsp").forward(request, response);
     }
 
     @Override
@@ -34,36 +36,58 @@ public class SignUpServlet extends HttpServlet {
             AccessDAO accessDAO = new AccessDAO();
             CustomerDAO customerDAO = new CustomerDAO();
 
+            List<Users> allUsers = accessDAO.getAllUsers();
 
+            boolean isUniqueUsername = false;
 
-            if(!name.isEmpty() && !contact.isEmpty() && !address.isEmpty() && !username.isEmpty() && !password.isEmpty()){
-                userId = userId + 1;
-                user.setId(userId);
-                user.setUser_type("user");
-                user.setUsername(username);
-                user.setPassword(password);
-                user.setActive(true);
-                if (accessDAO.registerUser(user)){
-                    customer.setName(name);
-                    customer.setContact(contact);
-                    customer.setAddress(address);
-                    customer.setBonus(BigDecimal.valueOf(0));
-                    customer.setBalance(BigDecimal.valueOf(0));
-                    customer.setBanned(false);
-                    customer.setActive(true);
-                    customer.setUser_id(user);
-                    boolean isSuccess = customerDAO.registerCustomer(customer);
-                    if (isSuccess){
-                    HttpSession session = request.getSession();
-                    session.setAttribute("succMsg","Successfully registered! Please Log in");
-                    response.sendRedirect("login.jsp");
+            HttpSession session = request.getSession();
+            if (!allUsers.isEmpty()) {
+                for (Users allUser : allUsers) {
+                    if (allUser.getUsername().equals(username)) {
+                        isUniqueUsername = false;
+                        break;
+                    } else {
+                        isUniqueUsername = true;
                     }
-                }else {
-                    throw new RuntimeException();
                 }
+            }else {
+                isUniqueUsername = true;
+            }
+            if (isUniqueUsername) {
+                if (!name.replace(" ", "").isEmpty() && !contact.replace(" ", "").isEmpty()
+                        && !address.replace(" ", "").isEmpty() && !username.replace(" ", "").isEmpty()
+                        && !password.replace(" ", "").isEmpty()) {
+                    userId = userId + 1;
+                    user.setId(userId);
+                    user.setUser_type("user");
+                    user.setUsername(username);
+                    user.setPassword(password);
+                    user.setActive(true);
+                    if (accessDAO.registerUser(user)) {
+                        customer.setName(name);
+                        customer.setContact(contact);
+                        customer.setAddress(address);
+                        customer.setBonus(BigDecimal.valueOf(0));
+                        customer.setBalance(BigDecimal.valueOf(0));
+                        customer.setBanned(false);
+                        customer.setActive(true);
+                        customer.setUser_id(user);
+                        boolean isSuccess = customerDAO.registerCustomer(customer);
+                        if (isSuccess) {
+                            session.setAttribute("succMsg", "Successfully registered! Please Log in");
+                            response.sendRedirect("login.jsp");
+                        }
+                    } else {
+                        throw new RuntimeException();
+                    }
                 }
-        }catch (Exception e){
+            } else {
+                session.setAttribute("errorMsg", "Username has already taken. Please try again!");
+                response.sendRedirect("error.jsp");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

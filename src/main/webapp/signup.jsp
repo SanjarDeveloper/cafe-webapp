@@ -1,4 +1,5 @@
-<%--
+<%@ page import="com.example.cafewebapp.DAO.AccessDAO" %>
+<%@ page import="com.example.cafewebapp.Entity.Users" %><%--
   Created by IntelliJ IDEA.
   User: Sanja
   Date: 22.06.2023
@@ -29,8 +30,8 @@
           <form action="register" method="post">
             <div class="form-group">
               <label>Enter Name</label> <input type="text"
-                                                required="required"
-                                                class="form-control" id="InputName" aria-describedby="name" name="name">
+                                                pattern="[a-zA-Z]+" required
+                                                class="form-control" id="InputName" aria-describedby="name" name="name" placeholder="John">
             </div>
             <div class="form-group">
               <label>Enter Contact Number</label> <input type="tel" pattern="[0-9]{5} [0-9]{7}"
@@ -45,8 +46,8 @@
             </div>
             <div class="form-group">
               <label>Enter Username</label> <input type="text"
-                                                        required="required"
-                                                        class="form-control" id="InputUsername" name="username">
+                                                   pattern="[a-zA-Z0-9]+" required
+                                                        class="form-control" id="InputUsername" name="username" placeholder="SomeOne12">
             </div>
             <div class="form-group">
               <label>Enter Password</label> <input type="password"

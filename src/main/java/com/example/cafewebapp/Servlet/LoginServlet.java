@@ -1,5 +1,6 @@
 package com.example.cafewebapp.Servlet;
 
+import com.example.cafewebapp.DAO.AccessDAO;
 import com.example.cafewebapp.Entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,25 +15,40 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("login.jsp").forward(req,resp);
+        getServletContext().getRequestDispatcher("login.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try{
-            String em=req.getParameter("em");
-            String ps=req.getParameter("ps");
+        try {
+            String username = req.getParameter("username");
+            String password = req.getParameter("password");
             Users user = new Users();
             HttpSession session = req.getSession();
 
-            if(em.equals("admin@gmail.com") && ps.equals("abcd")){
-                session.setAttribute("userobj",user);
-                user.setUser_type("admin");
-                resp.sendRedirect("admin.jsp");
-            } else {
-               // resp.sendRedirect("login.jsp");
+            AccessDAO dao = new AccessDAO();
+
+            boolean isMatch = false;
+
+            for (Users allUser : dao.getAllUsers()) {
+                if (username.equals(allUser.getUsername()) && password.equals(allUser.getPassword())) {
+                    isMatch = true;
+                    session.setAttribute("userobj", user);
+                    user.setUser_type(allUser.getUser_type());
+                    if (user.getUser_type().equals("admin")){
+                        resp.sendRedirect("admin.jsp");
+                    }else {
+                        resp.sendRedirect("menu.jsp");
+                    }
+                } else {
+                    isMatch = false;
+                }
             }
-        }catch (Exception e){
+            if (!isMatch) {
+                session.setAttribute("succMsg", "Wrong credentials!");
+                resp.sendRedirect("login.jsp");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

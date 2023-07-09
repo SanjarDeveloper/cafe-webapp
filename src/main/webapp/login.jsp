@@ -28,14 +28,14 @@
                     </c:if>
                   <form action="login" method="post">
                     <div class="form-group">
-                      <label>Enter Email</label> <input type="email"
+                      <label>Enter Username</label> <input type="text"
                                                         required="required"
-                    class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="em">
+                    class="form-control" id="InputUsername" aria-describedby="username" name="username">
                     </div>
                     <div class="form-group">
-                      <label for="exampleInputPassword1">Enter Password</label> <input type="password"
-                                                        required="required" type="password"
-                                                        class="form-control" id="exampleInputPassword1" name="ps">
+                      <label for="InputPassword">Enter Password</label> <input type="password"
+                                                        required="required"
+                                                        class="form-control" id="InputPassword" name="password">
                     </div>
                     <button type="submit" class="btn btn-primary badge-pill btn-block">Login</button>
                   </form>
