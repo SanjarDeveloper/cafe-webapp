@@ -13,6 +13,8 @@
 </head>
 <body style="background-color:#f0f1f2;">
 <%@include file="all_components/navbar.jsp" %>
+
+
 <div class="container-fluid">
     <div class="row p-5">
         <div class="col-md-4 offset-md-4">

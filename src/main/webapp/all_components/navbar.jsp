@@ -31,7 +31,11 @@
         <form class="form-inline my-2 my-lg-0">
             <c:if test="${userobj.user_type eq 'admin'}" >
                 <a href="#" class="btn btn-light mr-1"><i class="fas fa-user"></i>Admin</a>
-                <a href="#" class="btn btn-light"><i class="fas fa-sign-in-alt"></i>Log out</a>
+                <a href="logout" class="btn btn-light"><i class="fas fa-sign-in-alt"></i>Log out</a>
+            </c:if>
+            <c:if test="${userobj.user_type eq 'user'}" >
+                <a href="#" class="btn btn-light mr-1"><i class="fas fa-user"></i>${userobj.username}</a>
+                <button><a href="logout" class="btn btn-light"><i class="fas fa-sign-in-alt"></i>Log out</a></button>
             </c:if>
             <c:if test="${empty userobj}" >
                 <a href="login.jsp" class="btn btn-light mr-1"><i class="fas fa-sign-in-alt"></i>Sign in</a>

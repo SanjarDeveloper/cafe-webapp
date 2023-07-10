@@ -23,7 +23,6 @@ public class LoginServlet extends HttpServlet {
         try {
             String username = req.getParameter("username");
             String password = req.getParameter("password");
-            Users user = new Users();
             HttpSession session = req.getSession();
 
             AccessDAO dao = new AccessDAO();
@@ -33,12 +32,13 @@ public class LoginServlet extends HttpServlet {
             for (Users allUser : dao.getAllUsers()) {
                 if (username.equals(allUser.getUsername()) && password.equals(allUser.getPassword())) {
                     isMatch = true;
-                    session.setAttribute("userobj", user);
-                    user.setUser_type(allUser.getUser_type());
-                    if (user.getUser_type().equals("admin")){
+                    session.setAttribute("userobj", allUser);
+                    if (allUser.getUser_type().equals("admin")){
                         resp.sendRedirect("admin.jsp");
+                        break;
                     }else {
                         resp.sendRedirect("menu.jsp");
+                        break;
                     }
                 } else {
                     isMatch = false;
