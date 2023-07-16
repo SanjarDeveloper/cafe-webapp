@@ -3,6 +3,8 @@ package com.example.cafewebapp.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
+import java.sql.Timestamp;
+
 public class Orders {
     private int id;
     @ManyToOne
@@ -10,17 +12,19 @@ public class Orders {
     @OneToMany
     private Payments payment_id;
     private String status;
+    private Timestamp time;
     private String feedback;
     private int rating;
 
     public Orders() {
     }
 
-    public Orders(int id, Customers customer_id, Payments payment_id, String status, String feedback, int rating) {
+    public Orders(int id, Customers customer_id, Payments payment_id, String status, Timestamp time, String feedback, int rating) {
         this.id = id;
         this.customer_id = customer_id;
         this.payment_id = payment_id;
         this.status = status;
+        this.time = time;
         this.feedback = feedback;
         this.rating = rating;
     }
@@ -55,6 +59,14 @@ public class Orders {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 
     public String getFeedback() {

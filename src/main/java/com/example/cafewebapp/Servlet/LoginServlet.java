@@ -1,6 +1,9 @@
 package com.example.cafewebapp.Servlet;
 
 import com.example.cafewebapp.DAO.AccessDAO;
+import com.example.cafewebapp.DAO.CustomerDAO;
+import com.example.cafewebapp.DAO.OrderDAO;
+import com.example.cafewebapp.Entity.Customers;
 import com.example.cafewebapp.Entity.Users;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,6 +29,7 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = req.getSession();
 
             AccessDAO dao = new AccessDAO();
+            CustomerDAO customerDAO = new CustomerDAO();
 
             boolean isMatch = false;
 
@@ -33,11 +37,22 @@ public class LoginServlet extends HttpServlet {
                 if (username.equals(allUser.getUsername()) && password.equals(allUser.getPassword())) {
                     isMatch = true;
                     session.setAttribute("userobj", allUser);
+                    Customers customerByUserId = customerDAO.getCustomerByUserId(allUser.getId());
                     if (allUser.getUser_type().equals("admin")){
                         resp.sendRedirect("admin.jsp");
+                        session.setAttribute("customer",customerByUserId);
                         break;
                     }else {
-                        resp.sendRedirect("menu.jsp");
+                        OrderDAO orderDAO = new OrderDAO();
+                        int sizeNotTakenOrders = orderDAO.getAllNotTakenOrders(customerByUserId.getId()).size();
+                        if (sizeNotTakenOrders > 3){
+                            customerByUserId.setBanned(true);
+                            session.setAttribute("customer",customerByUserId);
+                            resp.sendRedirect("menu.jsp");
+                        }else {
+                            resp.sendRedirect("orders.jsp");
+                            session.setAttribute("customer",customerByUserId);
+                        }
                         break;
                     }
                 } else {

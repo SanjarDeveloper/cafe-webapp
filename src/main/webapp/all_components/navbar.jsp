@@ -1,3 +1,5 @@
+<%@ page import="com.example.cafewebapp.DAO.CustomerDAO" %>
+<%@ page import="com.example.cafewebapp.Entity.Customers" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page isELIgnored="false" %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-custom">
@@ -21,10 +23,21 @@
                     <a class="nav-link" href="menu.jsp">Menu</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="view_jobs.jsp">Customers</a>
+                    <a class="nav-link" href="customers.jsp">Customers</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="view_jobs.jsp">Orders</a>
+                    <a class="nav-link" href="orders.jsp">Orders</a>
+                </li>
+            </c:if>
+            <c:if test="${userobj.user_type eq 'user'}">
+                <li class="nav-item">
+                    <a class="nav-link" href="menu.jsp">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="cart.jsp">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="orders.jsp">Orders</a>
                 </li>
             </c:if>
         </ul>
@@ -33,7 +46,18 @@
                 <a href="#" class="btn btn-light mr-1"><i class="fas fa-user"></i>Admin</a>
                 <a href="logout" class="btn btn-light"><i class="fas fa-sign-in-alt"></i>Log out</a>
             </c:if>
+
             <c:if test="${userobj.user_type eq 'user'}" >
+                <c:if test="${customer.banned eq true}" >
+                    <a href="#" class="btn btn-light mr-1"><i class="fas fa-dollar-sign"></i>Banned</a>
+                </c:if>
+                <%
+                    Customers customer = (Customers) session.getAttribute("customer");
+                    CustomerDAO customerDAO = new CustomerDAO();
+                    Customers customerById = customerDAO.getCustomerById(customer.getId());
+                %>
+                <a href="#" class="btn btn-light mr-1"><i class="fas fa-dollar-sign"></i>Bonus: <%=customerById.getBonus()%></a>
+                <a href="#" class="btn btn-light mr-1"><i class="fas fa-dollar-sign"></i> <%=customerById.getBalance()%></a>
                 <a href="#" class="btn btn-light mr-1"><i class="fas fa-user"></i>${userobj.username}</a>
                 <button><a href="logout" class="btn btn-light"><i class="fas fa-sign-in-alt"></i>Log out</a></button>
             </c:if>

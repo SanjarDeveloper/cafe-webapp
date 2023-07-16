@@ -27,6 +27,11 @@
             <h4 class="text-center text-danger">${succMsg}</h4>
             <c:remove var="succMsg"/>
           </c:if>
+
+<c:if test="${userobj.user_type eq 'admin'}">
+  <%session.setAttribute("byAdmin","true");%>
+</c:if>
+
           <form action="register" method="post">
             <div class="form-group">
               <label>Enter Name</label> <input type="text"

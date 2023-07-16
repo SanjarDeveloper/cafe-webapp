@@ -20,7 +20,6 @@
             <div class="card">
                 <div class="card-body">
                     <div class="text-center">
-                        <i class="fa fa-user-plus fa-2x" aria-hidden="true"></i>
                         <h5>Create Food</h5>
                     </div>
                     <c:if test="${not empty succMsg }">

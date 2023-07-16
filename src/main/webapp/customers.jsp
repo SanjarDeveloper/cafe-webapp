@@ -1,8 +1,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.cafewebapp.DAO.FoodsDAO" %>
 <%@ page import="com.example.cafewebapp.Entity.Foods" %>
-<%@ page import="com.example.cafewebapp.DAO.OrderDAO" %>
-<%@ page import="com.example.cafewebapp.Entity.Orders" %><%--
+<%@ page import="com.example.cafewebapp.DAO.CustomerDAO" %>
+<%@ page import="com.example.cafewebapp.Entity.Customers" %><%--
   Created by IntelliJ IDEA.
   User: Sanja
   Date: 06.07.2023
@@ -12,20 +12,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Menu</title>
+    <title>Customers</title>
     <%@include file="all_components/all_css.jsp" %>
     <style>
-        .menu-item:last-child {
+        .customers-item:last-child{
             padding-bottom: 50px;
         }
-
-        .menu-item {
+        .customers-item {
             background-color: #ffe900;
             border: #000 solid 1px;
             border-radius: 20px;
         }
 
-        .menu-item h1 {
+        .customers-item h1 {
             margin: 10px auto;
             width: fit-content;
             background-color: #fff;
@@ -82,7 +81,6 @@
         body {
             background-color: #c4eaf4;
         }
-
         .btn-add-cart {
             background-color: #18f71d;
             color: white;
@@ -95,8 +93,7 @@
         button.btn-add-cart:hover {
             background-color: rgba(28, 160, 2, 0.76);
         }
-
-        .btn-create-food {
+        .btn-create-customer {
             background-color: #18f71d;
             color: white;
             font-weight: bolder;
@@ -104,7 +101,6 @@
             border-radius: 5px;
             padding: 10px 15px;
         }
-
         .main {
             position: relative;
             min-height: 100%;
@@ -118,65 +114,53 @@
     <c:redirect url="index.jsp"></c:redirect>
 </c:if>
 <div class="main">
-
-    <%--Checking for user is admin and show create food button--%>
     <c:if test="${userobj.user_type eq 'admin'}">
-        <button class="btn-create-food"><a href="create-food.jsp">Create Food</a></button>
+        <button class="btn-create-customer"><a href="signup.jsp">Create Customer</a></button>
     </c:if>
-        <%--Checking if customer has ban--%>
-    <c:if test="${customer.banned eq false}">
-        <h1 class="header">Available Foods:</h1>
-        <div class="menu">
-                <%--Message to show when adding to cart is success or failure--%>
-            <c:if test="${not empty succMsg }">
-                <h4 class="text-center text-danger">${succMsg}</h4>
-                <c:remove var="succMsg"/>
-            </c:if>
-            <%
-                FoodsDAO foodsDAO = new FoodsDAO();
-                List<Foods> foods = foodsDAO.getAllFoods();
-                if (!foods.isEmpty()) {
-                    for (Foods food : foods) {
-            %>
+    <h1 class="header">Customers List:</h1>
+    <div class="customers">
+        <c:if test="${not empty succMsg }">
+            <h4 class="text-center text-danger">${succMsg}</h4>
+            <c:remove var="succMsg"/>
+        </c:if>
+        <%
+            CustomerDAO customerDAO = new CustomerDAO();
+            List<Customers> allCustomers = customerDAO.getAllCustomers();
+            if (!allCustomers.isEmpty()) {
+                for (Customers allCustomer : allCustomers) {
+        %>
 
-            <div class="menu-item">
-                <h1><%=food.getName()%>
-                </h1>
-                <div class="details">
-                    <p><%=food.getDetails()%>
-                    </p>
-                    <h3>Price: $<%=food.getPrice()%>
-                    </h3>
-                </div>
+        <div class="customers-item">
+            <a href="edit-customer.jsp?id=<%=allCustomer.getId()%>"><h1><%=allCustomer.getName()%></h1></a>
 
-                <c:if test="${userobj.user_type eq 'user'}">
-                    <div class="options">
-                        <a href="add-cart?id=<%=food.getId()%>">
-                            <button class="btn-add-cart">Add Cart</button>
-                        </a>
-                    </div>
-                </c:if>
-                <c:if test="${userobj.user_type eq 'admin'}">
-                    <div class="options">
-                        <a href="edit-food.jsp?id=<%=food.getId()%>">
-                            <button class="btn-edit">Edit</button>
-                        </a>
-                        <a href="delete-food?id=<%=food.getId()%>">
-                            <button class="btn-delete">Delete</button>
-                        </a>
-                    </div>
-                </c:if>
+            <div class="details">
+                <p><%=allCustomer.getAddress()%>
+                </p>
+                <h3>+<%=allCustomer.getContact()%>
+                </h3>
             </div>
-
-            <%
-                    }
-                }
-            %>
+            <c:if test="${userobj.user_type eq 'user'}">
+                <div class="options">
+                    <button class="btn-add-cart">Add Cart</button>
+                </div>
+            </c:if>
+            <c:if test="${userobj.user_type eq 'admin'}">
+                <div class="options">
+                    <a href="edit-customer.jsp?id=<%=allCustomer.getId()%>">
+                        <button class="btn-edit">Edit</button>
+                    </a>
+                    <a href="delete-customer?id=<%=allCustomer.getId()%>">
+                        <button class="btn-delete">Delete</button>
+                    </a>
+                </div>
+            </c:if>
         </div>
-    </c:if>
-<c:if test="${customer.banned eq true}">
-    <h1 class="text-center text-danger">You are Banned. Please contact admin!</h1>
-</c:if>
+
+        <%
+                }
+            }
+        %>
+    </div>
     <%@include file="all_components/footer.jsp" %>
 </div>
 </body>

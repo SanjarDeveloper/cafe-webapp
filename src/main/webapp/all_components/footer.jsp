@@ -1,4 +1,4 @@
-<div class="container-fluid p-1 bg-custom" style="position: absolute;
+<div class="container-fluid p-1 bg-custom" id="footer" style="position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;">
