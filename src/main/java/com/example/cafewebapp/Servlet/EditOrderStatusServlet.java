@@ -24,18 +24,27 @@ public class EditOrderStatusServlet extends HttpServlet {
         OrderDAO orderDAO = new OrderDAO();
         Orders orderById = orderDAO.getOrderById(orderId);
         orderById.setStatus(orderStatus);
-        boolean isStatusUpdated = orderDAO.updateOrderStatus(orderById);
-        if (feedback != null) {
-            if (rating != null) {
-                boolean isFeedbackRatingAdded = orderDAO.addFeedbackandRating(feedback, Integer.parseInt(rating), orderId);
-                if (isFeedbackRatingAdded && isStatusUpdated){
+        String byAdmin = (String) session.getAttribute("ByAdmin");
+        if (byAdmin != null) {
+            if (byAdmin.equals("true")) {
+                boolean isStatusUpdated = orderDAO.updateOrderStatus(orderById);
+                if (isStatusUpdated) {
                     isSuccess = true;
                 }
             }
+        } else {
+            if (feedback != null) {
+                if (rating != null) {
+                    boolean isFeedbackRatingAdded = orderDAO.addFeedbackandRating(feedback, Integer.parseInt(rating), orderId);
+                    if (isFeedbackRatingAdded) {
+                        isSuccess = true;
+                    }
+                }
+            }
         }
-        if (isSuccess){
-            session.setAttribute("succMsg","Success!");
-        }else {
+        if (isSuccess) {
+            session.setAttribute("succMsg", "Success!");
+        } else {
             session.setAttribute("succMsg", "Something went wrong!");
         }
         response.sendRedirect("orders.jsp");

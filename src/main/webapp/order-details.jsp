@@ -40,6 +40,7 @@
                         int counter = 1;
                         String feedback = "";
                         String rating = "";
+
                         Customers customer = (Customers) session.getAttribute("customer");
                         int orderId = (int) session.getAttribute("orderId");
 
@@ -69,6 +70,7 @@
                         <%
                             }
                             Orders orderById = orderDAO.getOrderById(orderId);
+                            session.setAttribute("orderById", orderById);
                             session.setAttribute("orderStatus", orderById.getStatus());
                             if (orderById.getPayment_id().getType().equals("credit-card")) {
                                 session.setAttribute("ByBalance", true);
@@ -134,7 +136,7 @@
                                             <c:if test="${userobj.user_type eq 'user'}">readonly</c:if>
                                             <c:if test="${orderStatus eq 'Order Taken' or orderStatus eq 'Order Not Taken'}">readonly</c:if>>
                         </div>
-                        <c:if test="${orderStatus eq 'Order Taken'}">
+                        <c:if test="${orderStatus eq 'Order Taken' and orderById.feedback eq null and orderById.feedback eq null}">
                         <div class="form-group">
                         <label for="feedback">Feedback</label>
                         <input <c:if test="${userobj.user_type eq 'admin'}">readonly</c:if> id="feedback"
@@ -152,13 +154,33 @@
                                class="btn btn-primary badge-pill btn-block">
                         </div>
                         </c:if>
+
+                        <c:if test="${orderById.feedback ne null and orderById.rating ne null}">
+                            <div class="form-group">
+                                <label for="feedback">Feedback</label>
+                                <input readonly
+                                       name="feedback" placeholder="Leave your feedback" value="<%=feedback%>" required>
+                                <label>Rating</label>
+                                <select name="rating" disabled="true">
+                                    <option value="1" <c:if test="${rating eq 1}">selected</c:if>>1</option>
+                                    <option value="2" <c:if test="${rating eq 2}">selected</c:if>>2</option>
+                                    <option value="3" <c:if test="${rating eq 3}">selected</c:if>>3</option>
+                                    <option value="4" <c:if test="${rating eq 4}">selected</c:if>>4</option>
+                                    <option value="5" <c:if test="${rating eq 5}">selected</c:if>>5</option>
+                                </select>
+
+                                <input type="submit" value="Submit Feedback"
+                                       class="btn btn-primary badge-pill btn-block">
+                            </div>
+                        </c:if>
+
                         <a href="orders.jsp">
                             <button type="button" class="btn btn-primary badge-pill btn-block">Back</button>
                         </a>
 
                         <c:if test="${userobj.user_type eq 'admin'}">
                             <button type="submit" class="btn btn-primary badge-pill btn-block">Update</button>
-
+                            <%session.setAttribute("ByAdmin","true");%>
                         </c:if>
                     </form>
                 </div>

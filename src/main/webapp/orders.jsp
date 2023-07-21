@@ -174,6 +174,7 @@
                     } else {
                         session.removeAttribute("orderStatus");
                     }
+                    session.setAttribute("order",order);
         %>
 
         <div class="menu-item">
@@ -190,8 +191,10 @@
                     <a href="order-details?id=<%=order.getId()%>">
                         <button class="btn-add-cart">View Details</button>
                     </a>
-                    <c:if test="${orderStatus eq 'Order Taken'}">
-                        <button class="btn-feedback">Give Feedback</button>
+                    <c:if test="${orderStatus eq 'Order Taken' and order.feedback eq null}">
+                        <a href="order-details?id=<%=order.getId()%>">
+                            <button class="btn-feedback">Give Feedback</button>
+                        </a>
                     </c:if>
                     <c:if test="${orderStatus eq 'Order Not Taken'}">
                         <button class="btn-not-taken">Order Not Taken -$
@@ -211,6 +214,7 @@
 
         <%
                     session.setAttribute("orderStatus", "");
+                    session.removeAttribute("order");
                 }
             }
         %>
