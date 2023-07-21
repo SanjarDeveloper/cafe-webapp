@@ -2,7 +2,8 @@
 <%@ page import="com.example.cafewebapp.DAO.FoodsDAO" %>
 <%@ page import="com.example.cafewebapp.Entity.Foods" %>
 <%@ page import="com.example.cafewebapp.DAO.OrderDAO" %>
-<%@ page import="com.example.cafewebapp.Entity.Orders" %><%--
+<%@ page import="com.example.cafewebapp.Entity.Orders" %>
+<%@ page import="java.text.DateFormat" %><%--
   Created by IntelliJ IDEA.
   User: Sanja
   Date: 06.07.2023
@@ -123,61 +124,89 @@
     <c:if test="${userobj.user_type eq 'admin'}">
         <button class="btn-create-food"><a href="create-food.jsp">Create Food</a></button>
     </c:if>
-        <%--Checking if customer has ban--%>
+    <%--Checking if customer has ban--%>
     <c:if test="${customer.banned eq false}">
-        <h1 class="header">Available Foods:</h1>
-        <div class="menu">
-                <%--Message to show when adding to cart is success or failure--%>
-            <c:if test="${not empty succMsg }">
-                <h4 class="text-center text-danger">${succMsg}</h4>
-                <c:remove var="succMsg"/>
-            </c:if>
+    <h1 class="header">Available Foods:</h1>
+        <form action="getTime.jsp" method="get">
+            <label for="date">Select a date:</label>
+            <input type="datetime-local" id="date" name="date" min="2023-07-18T00:00:00" onclick="myFunction()">
+
+            <script>
+                function myFunction() {
+                    let dateInput = document.getElementById("date");
+                    var date = new Date();
+                    date.setUTCHours(date.getUTCHours() + 5)
+                    dateInput.min = date.toISOString().slice(0,new Date().toISOString().lastIndexOf(":"));
+                }
+            </script>
+            <input type="submit">
+
             <%
-                FoodsDAO foodsDAO = new FoodsDAO();
-                List<Foods> foods = foodsDAO.getAllFoods();
-                if (!foods.isEmpty()) {
-                    for (Foods food : foods) {
+                String time = (String) session.getAttribute("takeaway-time");
+                if (time != null) {
+
             %>
-
-            <div class="menu-item">
-                <h1><%=food.getName()%>
-                </h1>
-                <div class="details">
-                    <p><%=food.getDetails()%>
-                    </p>
-                    <h3>Price: $<%=food.getPrice()%>
-                    </h3>
-                </div>
-
-                <c:if test="${userobj.user_type eq 'user'}">
-                    <div class="options">
-                        <a href="add-cart?id=<%=food.getId()%>">
-                            <button class="btn-add-cart">Add Cart</button>
-                        </a>
-                    </div>
-                </c:if>
-                <c:if test="${userobj.user_type eq 'admin'}">
-                    <div class="options">
-                        <a href="edit-food.jsp?id=<%=food.getId()%>">
-                            <button class="btn-edit">Edit</button>
-                        </a>
-                        <a href="delete-food?id=<%=food.getId()%>">
-                            <button class="btn-delete">Delete</button>
-                        </a>
-                    </div>
-                </c:if>
-            </div>
-
+            <h1>Selected time: <%=time%></h1>
             <%
-                    }
                 }
             %>
+        </form>
+    <div class="menu">
+            <%--Message to show when adding to cart is success or failure--%>
+        <c:if test="${not empty succMsg }">
+            <h4 class="text-center text-danger">${succMsg}</h4>
+            <c:remove var="succMsg"/>
+        </c:if>
+
+        <%
+            FoodsDAO foodsDAO = new FoodsDAO();
+            List<Foods> foods = foodsDAO.getAllFoods();
+            if (!foods.isEmpty()) {
+                for (Foods food : foods) {
+        %>
+
+        <div class="menu-item">
+            <h1><%=food.getName()%>
+            </h1>
+            <div class="details">
+                <p><%=food.getDetails()%>
+                </p>
+                <h3>Price: $<%=food.getPrice()%>
+                </h3>
+            </div>
+
+            <c:if test="${userobj.user_type eq 'user'}">
+                <div class="options">
+                    <a href="add-cart?id=<%=food.getId()%>">
+                        <button class="btn-add-cart">Add Cart</button>
+                    </a>
+                </div>
+            </c:if>
+            <c:if test="${userobj.user_type eq 'admin'}">
+                <div class="options">
+                    <a href="edit-food.jsp?id=<%=food.getId()%>">
+                        <button class="btn-edit">Edit</button>
+                    </a>
+                    <a href="delete-food?id=<%=food.getId()%>">
+                        <button class="btn-delete">Delete</button>
+                    </a>
+                </div>
+            </c:if>
         </div>
-    </c:if>
-<c:if test="${customer.banned eq true}">
-    <h1 class="text-center text-danger">You are Banned. Please contact admin!</h1>
-</c:if>
-    <%@include file="all_components/footer.jsp" %>
+
+        <%
+                }
+            }
+        %>
+        </form>
+
+    </div>
+
+        </c:if>
+        <c:if test="${customer.banned eq true}">
+            <h1 class="text-center text-danger">You are Banned. Please contact admin!</h1>
+        </c:if>
+        <%@include file="all_components/footer.jsp" %>
 </div>
 </body>
 </html>

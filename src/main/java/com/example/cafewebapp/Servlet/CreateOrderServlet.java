@@ -11,6 +11,9 @@ import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 
 import static com.example.cafewebapp.DAO.OrderDAO.orderId;
@@ -24,31 +27,46 @@ public class CreateOrderServlet extends HttpServlet {
 
     int paymentid = paymentId;
     int orderid = orderId;
+    Timestamp takeawaytime = null;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean isSuccess = false;
+        String succMsg = "Something went wrong!";
         try {
             HttpSession session = request.getSession();
             Users userobj = (Users) session.getAttribute("userobj");
             Double total = (Double) session.getAttribute("total");
             String byBonus = request.getParameter("byBonus");
-            Customers customer = customerDAO.getCustomerByUserId(userobj.getId());
-            if (byBonus == null) {
-                boolean isSuccessPayment = withdrawFromBalance(customer, total);
-                if (isSuccessPayment) {
-                    boolean isSuccessOrder = makeOrder(customer);
-                    if (isSuccessOrder) {
-                        isSuccess = createOrderDetails();
+            String time = (String) session.getAttribute("takeaway-time");
+            if (time != null) {
+                time = time + ":00";
+                takeawaytime = Timestamp.valueOf(time);
+                Customers customer = customerDAO.getCustomerByUserId(userobj.getId());
+                if (byBonus == null) {
+                    boolean isSuccessPayment = withdrawFromBalance(customer, total);
+                    if (isSuccessPayment) {
+                        boolean isSuccessOrder = makeOrder(customer);
+                        if (isSuccessOrder) {
+                            isSuccess = createOrderDetails();
+                            session.removeAttribute("takeaway-time");
+                        }
+                    } else {
+                        succMsg = "You do not have enough money!";
+                    }
+                } else {
+                    boolean isSuccessPayment = withdrawFromBonus(customer, total);
+                    if (isSuccessPayment) {
+                        boolean isSuccessOrder = makeOrder(customer);
+                        if (isSuccessOrder) {
+                            isSuccess = createOrderDetails();
+                        }
+                    } else {
+                        succMsg = "You do not enough bonus!";
                     }
                 }
             }else {
-                boolean isSuccessPayment = withdrawFromBonus(customer, total);
-                if (isSuccessPayment){
-                    boolean isSuccessOrder = makeOrder(customer);
-                    if (isSuccessOrder){
-                        isSuccess = createOrderDetails();
-                    }
-                }
+                succMsg = "Please select takeaway time!";
             }
             if (isSuccess) {
                 CartDAO.foodsList.clear();
@@ -57,7 +75,7 @@ public class CreateOrderServlet extends HttpServlet {
                 session.setAttribute("succMsg", "Order successfully created!");
                 response.sendRedirect("menu.jsp");
             } else {
-                session.setAttribute("succMsg", "Something went wrong!");
+                session.setAttribute("succMsg", succMsg);
                 response.sendRedirect("cart.jsp");
             }
         } catch (Exception e) {
@@ -95,6 +113,7 @@ public class CreateOrderServlet extends HttpServlet {
         Payments paymentById = paymentDAO.getPaymentById(paymentid);
         orders.setPayment_id(paymentById);
         orders.setStatus("New");
+        orders.setTakeaway_time(Timestamp.valueOf(String.valueOf(takeawaytime)));
         return orderDAO.addOrder(orders);
     }
 
@@ -114,7 +133,7 @@ public class CreateOrderServlet extends HttpServlet {
         return isSuccessPayment;
     }
 
-    public boolean createOrderDetails(){
+    public boolean createOrderDetails() {
         boolean isSuccess = true;
         LinkedHashMap<Foods, Integer> foodsList = CartDAO.foodsList;
         Orders orderById = orderDAO.getOrderById(orderid);

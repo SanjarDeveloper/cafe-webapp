@@ -2,6 +2,7 @@ package com.example.cafewebapp.Servlet;
 
 import com.example.cafewebapp.DAO.AccessDAO;
 import com.example.cafewebapp.DAO.CustomerDAO;
+import com.example.cafewebapp.DAO.OrderDAO;
 import com.example.cafewebapp.Entity.Customers;
 import com.example.cafewebapp.Entity.Users;
 import jakarta.servlet.*;
@@ -75,6 +76,9 @@ public class EditCustomerServlet extends HttpServlet {
                         customer.setBonus(BigDecimal.valueOf(Double.parseDouble(bonus)));
                         customer.setBalance(BigDecimal.valueOf(Double.parseDouble(balance)));
                         customer.setBanned(Boolean.parseBoolean(banned));
+                        if (banned.equals("true")){
+                            OrderDAO.banStatus = null;
+                        }
                         customer.setActive(Boolean.parseBoolean(active));
                         customer.setUser_id(user);
                         boolean isSuccess = customerDAO.updateCustomer(customer);

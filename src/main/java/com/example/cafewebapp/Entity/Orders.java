@@ -15,11 +15,12 @@ public class Orders {
     private Timestamp time;
     private String feedback;
     private int rating;
+    private Timestamp takeaway_time;
 
     public Orders() {
     }
 
-    public Orders(int id, Customers customer_id, Payments payment_id, String status, Timestamp time, String feedback, int rating) {
+    public Orders(int id, Customers customer_id, Payments payment_id, String status, Timestamp time, String feedback, int rating, Timestamp takeaway_time) {
         this.id = id;
         this.customer_id = customer_id;
         this.payment_id = payment_id;
@@ -27,6 +28,7 @@ public class Orders {
         this.time = time;
         this.feedback = feedback;
         this.rating = rating;
+        this.takeaway_time = takeaway_time;
     }
 
     public int getId() {
@@ -83,5 +85,13 @@ public class Orders {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public Timestamp getTakeaway_time() {
+        return takeaway_time;
+    }
+
+    public void setTakeaway_time(Timestamp takeaway_time) {
+        this.takeaway_time = takeaway_time;
     }
 }

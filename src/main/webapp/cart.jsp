@@ -111,20 +111,27 @@
 <c:if test="${empty userobj}">
     <c:redirect url="index.jsp"></c:redirect>
 </c:if>
+
+<%
+    LinkedHashMap<Foods, Integer> allFoodsInCart = CartDAO.foodsList;
+    if (allFoodsInCart.size() == 0) {
+        session.setAttribute("emptyCart", true);
+    }else {
+        session.setAttribute("emptyCart", false);
+    }
+%>
+
 <div class="main">
-    <%--<c:if test="${userobj.user_type eq 'admin'}">
-        <button class="btn-create-food"><a href="create-food.jsp">Create Food</a></button>
-    </c:if>--%>
     <c:if test="${customer.banned ne true}">
         <h1 class="header">Cart:</h1>
         <div class="menu">
-            <c:if test="${not empty succMsg }">
-                <h4 class="text-center text-danger">${succMsg}</h4>
-                <c:remove var="succMsg"/>
-            </c:if>
+        <c:if test="${not empty succMsg }">
+            <h4 class="text-center text-danger">${succMsg}</h4>
+            <c:remove var="succMsg"/>
+        </c:if>
+        <c:if test="${emptyCart eq false}">
             <%
                 double total = 0;
-                LinkedHashMap<Foods, Integer> allFoodsInCart = CartDAO.foodsList;
                 for (Foods foods : allFoodsInCart.keySet()) {
                     total = total + allFoodsInCart.get(foods) * Double.parseDouble(String.valueOf(foods.getPrice()));
             %>
@@ -153,30 +160,37 @@
                 }
                 session.setAttribute("total", total);
             %>
-        </div>
-        <div class="total">
-            <h1>Total</h1>
-            <div class="details">
-                <h3>Price: <%=total%>
-                </h3>
+
             </div>
-            <div class="options">
-                <a href="clear-cart">
-                    <button class="btn-clear">Clear Cart</button>
-                </a>
-                <a href="create-order">
-                    <button class="btn-order">Pay By Balance</button>
-                </a>
-                <a href="create-order?byBonus=true">
-                    <button class="btn-order">Pay By Bonus</button>
-                </a>
+            <div class="total">
+                <h1>Total</h1>
+                <div class="details">
+                    <h3>Price: ${total}
+                    </h3>
+
+                </div>
+                <div class="options">
+                    <a href="clear-cart">
+                        <button class="btn-clear">Clear Cart</button>
+                    </a>
+                    <a href="create-order">
+                        <button class="btn-order">Pay By Balance</button>
+                    </a>
+                    <a href="create-order?byBonus=true">
+                        <button class="btn-order">Pay By Bonus</button>
+                    </a>
+                </div>
             </div>
-        </div>
-    </c:if>
-        <c:if test="${customer.banned eq true}">
-            <h1 class="text-center text-danger">You are Banned. Please contact admin!</h1>
         </c:if>
+        <c:if test="${emptyCart eq true}">
+            <h1 class="text-center text-danger">Cart is empty!</h1>
+        </c:if>
+    </c:if>
+    <c:if test="${customer.banned eq true}">
+        <h1 class="text-center text-danger">You are Banned. Please contact admin!</h1>
+    </c:if>
     <%@include file="all_components/footer.jsp" %>
 </div>
+
 </body>
 </html>

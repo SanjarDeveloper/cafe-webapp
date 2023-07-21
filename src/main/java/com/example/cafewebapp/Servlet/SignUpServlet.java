@@ -14,7 +14,7 @@ import java.util.List;
 
 @WebServlet(name = "SignUpServlet", value = "/register")
 public class SignUpServlet extends HttpServlet {
-    int userId = 0;
+    int userId = 1;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

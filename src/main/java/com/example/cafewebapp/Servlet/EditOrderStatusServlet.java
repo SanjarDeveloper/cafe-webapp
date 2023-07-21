@@ -15,13 +15,24 @@ import java.io.IOException;
 public class EditOrderStatusServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        boolean isSuccess = false;
         HttpSession session = request.getSession();
         String orderStatus = request.getParameter("orderStatus");
+        String feedback = request.getParameter("feedback");
+        String rating = request.getParameter("rating");
         int orderId = (int) session.getAttribute("orderId");
         OrderDAO orderDAO = new OrderDAO();
         Orders orderById = orderDAO.getOrderById(orderId);
         orderById.setStatus(orderStatus);
-        boolean isSuccess = orderDAO.updateOrderStatus(orderById);
+        boolean isStatusUpdated = orderDAO.updateOrderStatus(orderById);
+        if (feedback != null) {
+            if (rating != null) {
+                boolean isFeedbackRatingAdded = orderDAO.addFeedbackandRating(feedback, Integer.parseInt(rating), orderId);
+                if (isFeedbackRatingAdded && isStatusUpdated){
+                    isSuccess = true;
+                }
+            }
+        }
         if (isSuccess){
             session.setAttribute("succMsg","Success!");
         }else {

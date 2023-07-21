@@ -2,7 +2,9 @@
 <%@ page import="com.example.cafewebapp.DAO.FoodsDAO" %>
 <%@ page import="com.example.cafewebapp.Entity.Foods" %>
 <%@ page import="com.example.cafewebapp.Entity.Orders" %>
-<%@ page import="com.example.cafewebapp.DAO.OrderDAO" %><%--
+<%@ page import="com.example.cafewebapp.DAO.OrderDAO" %>
+<%@ page import="com.example.cafewebapp.Entity.Users" %>
+<%@ page import="static com.example.cafewebapp.DAO.OrderDAO.banStatus" %><%--
   Created by IntelliJ IDEA.
   User: Sanja
   Date: 06.07.2023
@@ -62,7 +64,7 @@
 
         }
 
-        button.btn-take-order, button.btn-not-taken {
+        button.btn-feedback, button.btn-not-taken {
             background-color: #ffa100;
             color: white;
             font-weight: bolder;
@@ -71,13 +73,14 @@
             padding: 10px 10px;
         }
 
-        button.btn-not-taken{
+        button.btn-not-taken {
             background-color: #d80000;
         }
 
-        button.btn-take-order:hover {
+        button.btn-feedback:hover {
             background-color: rgba(220, 148, 0, 0.9);
         }
+
         button.btn-not-taken:hover {
             background-color: #ab0000;
         }
@@ -135,36 +138,39 @@
             <c:remove var="succMsg"/>
         </c:if>
         <%
+            Users userobj = (Users) session.getAttribute("userobj");
             OrderDAO orderDAO = new OrderDAO();
-            CustomerDAO customerDAO = new CustomerDAO();
-            Customers customer = (Customers) session.getAttribute("customer");
-            int numOfNotTakenOrders = orderDAO.getAllNotTakenOrders(customer.getId()).size();
-            session.setAttribute("numOfNotTakenOrders", numOfNotTakenOrders);
-            String banStatus = (String) session.getAttribute("BanStatus");
-            if (numOfNotTakenOrders == 1 ){
-                if (banStatus == null) {
-                    customerDAO.minusAmountFromBalance(customer.getId(), 10.0);
-                    session.setAttribute("BanStatus", "1");
-                }
-            }else if(numOfNotTakenOrders == 2){
-                if (banStatus.equals("1")) {
-                    customerDAO.minusAmountFromBalance(customer.getId(), 10.0);
-                    session.setAttribute("BanStatus", "2");
-                }
-            } else if (numOfNotTakenOrders >= 3) {
-                if (banStatus.equals("2")) {
-                    customerDAO.makeCustomerBanned(customer.getId());
+
+            if (userobj.getUser_type().equals("user")) {
+                CustomerDAO customerDAO = new CustomerDAO();
+                Customers customer = (Customers) session.getAttribute("customer");
+                int numOfNotTakenOrders = orderDAO.getAllNotTakenOrders(customer.getId()).size();
+                session.setAttribute("numOfNotTakenOrders", numOfNotTakenOrders);
+                if (numOfNotTakenOrders == 1) {
+                    if (banStatus == null) {
+                        customerDAO.minusAmountFromBalance(customer.getId(), 10.0);
+                        banStatus = "1";
+                    }
+                } else if (numOfNotTakenOrders == 2) {
+                    if (banStatus.equals("1")) {
+                        customerDAO.minusAmountFromBalance(customer.getId(), 10.0);
+                        banStatus = "2";
+                    }
+                } else if (numOfNotTakenOrders >= 3) {
+                    if (banStatus.equals("2")) {
+                        customerDAO.makeCustomerBanned(customer.getId());
+                        banStatus = "banned";
+                    }
                 }
             }
 
             List<Orders> orders = orderDAO.getAllOrders();
             if (!orders.isEmpty()) {
                 for (Orders order : orders) {
-                    if (order.getStatus().equals("Order Taken")){
-                        session.setAttribute("orderStatus","Order Taken");
-                    }
-                    else if (order.getStatus().equals("Order Not Taken")){
-                        session.setAttribute("orderStatus","Order Not Taken");
+                    if (order.getStatus().equals("Order Taken")) {
+                        session.setAttribute("orderStatus", "Order Taken");
+                    } else if (order.getStatus().equals("Order Not Taken")) {
+                        session.setAttribute("orderStatus", "Order Not Taken");
                     } else {
                         session.removeAttribute("orderStatus");
                     }
@@ -185,11 +191,12 @@
                         <button class="btn-add-cart">View Details</button>
                     </a>
                     <c:if test="${orderStatus eq 'Order Taken'}">
-                        <button class="btn-take-order">Order Taken</button>
+                        <button class="btn-feedback">Give Feedback</button>
                     </c:if>
                     <c:if test="${orderStatus eq 'Order Not Taken'}">
                         <button class="btn-not-taken">Order Not Taken -$
-                            <c:if test="${numOfNotTakenOrders ne 0}">1</c:if>0</button>
+                            <c:if test="${numOfNotTakenOrders ne 0}">1</c:if>0
+                        </button>
                     </c:if>
                 </div>
             </c:if>
@@ -203,7 +210,7 @@
         </div>
 
         <%
-                    session.setAttribute("orderStatus","");
+                    session.setAttribute("orderStatus", "");
                 }
             }
         %>

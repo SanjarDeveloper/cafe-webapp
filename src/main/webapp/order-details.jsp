@@ -38,6 +38,8 @@
                     </c:if>
                     <%
                         int counter = 1;
+                        String feedback = "";
+                        String rating = "";
                         Customers customer = (Customers) session.getAttribute("customer");
                         int orderId = (int) session.getAttribute("orderId");
 
@@ -67,11 +69,31 @@
                         <%
                             }
                             Orders orderById = orderDAO.getOrderById(orderId);
-                            session.setAttribute("orderStatus",orderById.getStatus());
-                            if (orderById.getPayment_id().getType().equals("credit-card")){
-                                session.setAttribute("ByBalance",true);
-                            }else {
+                            session.setAttribute("orderStatus", orderById.getStatus());
+                            if (orderById.getPayment_id().getType().equals("credit-card")) {
+                                session.setAttribute("ByBalance", true);
+                            } else {
                                 session.removeAttribute("ByBalance");
+                            }
+                            if (orderById.getFeedback() != null) {
+                                session.setAttribute("feedback", orderById.getFeedback());
+                            }
+                            if (orderById.getRating() == 1) {
+                                session.setAttribute("rating", "1");
+                            } else if (orderById.getRating() == 2) {
+                                session.setAttribute("rating", "2");
+                            } else if (orderById.getRating() == 3) {
+                                session.setAttribute("rating", "3");
+                            } else if (orderById.getRating() == 4) {
+                                session.setAttribute("rating", "4");
+                            } else if (orderById.getRating() == 5) {
+                                session.setAttribute("rating", "5");
+                            }
+                            if (orderById.getFeedback() != null){
+                                feedback = orderById.getFeedback();
+                            }
+                            if (orderById.getRating() != 0){
+                                rating = String.valueOf(orderById.getRating());
                             }
                         %>
                         <div class="form-group">
@@ -87,6 +109,12 @@
                                                         aria-describedby="paymentTime"
                                                         name="time"
                                                         value="<%=orderById.getPayment_id().getTime()%>" readonly>
+                            <label>Takeaway Time:</label> <input type="text"
+                                                                 class="form-control"
+                                                                 id="takeaway-time"
+                                                                 aria-describedby="takeaway-time"
+                                                                 name="takeaway-time"
+                                                                 value="<%=orderById.getTakeaway_time()%>" readonly>
                         </div>
                         <c:if test="${ByBalance eq true}">
                             <div class="form-group">
@@ -100,12 +128,30 @@
                                 <c:if test="${userobj.user_type eq 'admin'}">(New,Preparing,Order Taken or Order Not Taken)</c:if>
 
                             </label> <input type="text"
-                                                                class="form-control"
-                                                                name="orderStatus"
-                                                                value="<%=orderById.getStatus()%>"
-                                                                <c:if test="${userobj.user_type eq 'user'}">readonly</c:if>
-                                                                <c:if test="${orderStatus eq 'Order Taken' or orderStatus eq 'Order Not Taken'}">readonly</c:if>>
+                                            class="form-control"
+                                            name="orderStatus"
+                                            value="<%=orderById.getStatus()%>"
+                                            <c:if test="${userobj.user_type eq 'user'}">readonly</c:if>
+                                            <c:if test="${orderStatus eq 'Order Taken' or orderStatus eq 'Order Not Taken'}">readonly</c:if>>
                         </div>
+                        <c:if test="${orderStatus eq 'Order Taken'}">
+                        <div class="form-group">
+                        <label for="feedback">Feedback</label>
+                        <input <c:if test="${userobj.user_type eq 'admin'}">readonly</c:if> id="feedback"
+                                name="feedback" placeholder="Leave your feedback" value="<%=feedback%>" required>
+                        <label>Rating</label>
+                        <select name="rating" required>
+                            <option value="1" <c:if test="${rating eq 1}">selected</c:if>>1</option>
+                            <option value="2" <c:if test="${rating eq 2}">selected</c:if>>2</option>
+                            <option value="3" <c:if test="${rating eq 3}">selected</c:if>>3</option>
+                            <option value="4" <c:if test="${rating eq 4}">selected</c:if>>4</option>
+                            <option value="5" <c:if test="${rating eq 5}">selected</c:if>>5</option>
+                        </select>
+
+                        <input type="submit" value="Submit Feedback"
+                               class="btn btn-primary badge-pill btn-block">
+                        </div>
+                        </c:if>
                         <a href="orders.jsp">
                             <button type="button" class="btn btn-primary badge-pill btn-block">Back</button>
                         </a>

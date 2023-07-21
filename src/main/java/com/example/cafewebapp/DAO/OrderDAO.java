@@ -4,22 +4,19 @@ import com.example.cafewebapp.DB.DBConnect;
 import com.example.cafewebapp.Entity.*;
 import com.example.cafewebapp.Entity.DTO.OrderDetailsDTO;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO {
     public static int orderId = 1;
+    public static String banStatus = null;
 
     public boolean addOrder(Orders order) {
         boolean isSuccess = false;
         try {
             Connection conn = DBConnect.getConn();
-            String sql = "INSERT INTO orders(id,customer_id,payment_id,status,feedback,rating) VALUES(?,?,?,?,?,?)";
+            String sql = "INSERT INTO orders(id,customer_id,payment_id,status,feedback,rating,takeaway_time) VALUES(?,?,?,?,?,?,?)";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, order.getId());
             statement.setInt(2, order.getCustomer_id().getId());
@@ -27,6 +24,7 @@ public class OrderDAO {
             statement.setString(4, order.getStatus());
             statement.setString(5, order.getFeedback());
             statement.setInt(6, order.getRating());
+            statement.setTimestamp(7, order.getTakeaway_time());
             int i = statement.executeUpdate();
             if (i == 1) {
                 orderId += 1;
@@ -58,6 +56,7 @@ public class OrderDAO {
                 orders.setTime(resultSet.getTimestamp(5));
                 orders.setFeedback(resultSet.getString(6));
                 orders.setRating(resultSet.getInt(7));
+                orders.setTakeaway_time(resultSet.getTimestamp(8));
                 ordersList.add(orders);
             }
         } catch (Exception e) {
@@ -86,6 +85,7 @@ public class OrderDAO {
                 orders.setTime(resultSet.getTimestamp(5));
                 orders.setFeedback(resultSet.getString(6));
                 orders.setRating(resultSet.getInt(7));
+                orders.setTakeaway_time(resultSet.getTimestamp(8));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -162,17 +162,28 @@ public class OrderDAO {
                     ordersList.add(allOrder);
                 }
             }
-            /*if (ordersList.size() == 1) {
-
-            } else if (ordersList.size() == 2) {
-
-            } else if (ordersList.size() >= 3) {
-
-            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
         return ordersList;
     }
 
+    public boolean addFeedbackandRating(String feedback,int rating,int orderId) {
+        boolean isSuccess = false;
+        try {
+            Connection conn = DBConnect.getConn();
+            String sql = "UPDATE orders SET feedback = ?, rating = ? WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, feedback);
+            statement.setInt(2, rating);
+            statement.setInt(3, orderId);
+            int i = statement.executeUpdate();
+            if (i == 1) {
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isSuccess;
+    }
 }
