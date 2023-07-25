@@ -72,4 +72,22 @@ public class PaymentDAO {
         }
         return payment;
     }
+
+    public boolean deletePayment(int id){
+        boolean f = false;
+        try{
+            Connection conn = DBConnect.getConn();
+            String sql = "DELETE FROM payments WHERE id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            int i = preparedStatement.executeUpdate();
+
+            if(i == 1){
+                f = true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return f;
+    }
 }

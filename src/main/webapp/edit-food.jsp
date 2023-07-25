@@ -74,7 +74,7 @@
                 </c:if>
               </select>
             </div>
-            <button type="submit" class="btn btn-primary badge-pill btn-block">Create</button>
+            <button type="submit" class="btn btn-primary badge-pill btn-block">Update</button>
           </form>
         </div>
       </div>

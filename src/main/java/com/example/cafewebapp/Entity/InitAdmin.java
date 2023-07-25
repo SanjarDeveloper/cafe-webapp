@@ -11,7 +11,8 @@ import java.math.BigDecimal;
 public class InitAdmin implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-/*        CustomerDAO customerDAO = new CustomerDAO();
+
+        CustomerDAO customerDAO = new CustomerDAO();
         AccessDAO accessDAO = new AccessDAO();
         Users users = new Users();
         users.setId(1);
@@ -20,7 +21,7 @@ public class InitAdmin implements ServletContextListener {
         users.setPassword("admin");
         users.setActive(true);
         boolean isRegisteredUser = accessDAO.registerUser(users);
-        if (isRegisteredUser){
+        if (isRegisteredUser) {
             Customers customers = new Customers();
             customers.setId(1);
             customers.setName("Admin");
@@ -32,7 +33,7 @@ public class InitAdmin implements ServletContextListener {
             customers.setBalance(BigDecimal.ZERO);
             customers.setUser_id(users);
             customerDAO.registerCustomer(customers);
-        }*/
+        }
     }
 
     @Override

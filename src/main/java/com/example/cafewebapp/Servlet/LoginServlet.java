@@ -33,27 +33,30 @@ public class LoginServlet extends HttpServlet {
 
             boolean isMatch = false;
 
-            for (Users allUser : dao.getAllUsers()) {
+            for (Users allUser : dao.getAllActiveUsers()) {
                 if (username.equals(allUser.getUsername()) && password.equals(allUser.getPassword())) {
-                    isMatch = true;
-                    session.setAttribute("userobj", allUser);
-                    Customers customerByUserId = customerDAO.getCustomerByUserId(allUser.getId());
-                    if (allUser.getUser_type().equals("admin")){
-                        resp.sendRedirect("admin.jsp");
-                        session.setAttribute("customer",customerByUserId);
-                        break;
-                    }else {
-                        OrderDAO orderDAO = new OrderDAO();
-                        int sizeNotTakenOrders = orderDAO.getAllNotTakenOrders(customerByUserId.getId()).size();
-                        if (sizeNotTakenOrders > 3){
-                            customerByUserId.setBanned(true);
-                            session.setAttribute("customer",customerByUserId);
-                            resp.sendRedirect("menu.jsp");
-                        }else {
-                            resp.sendRedirect("orders.jsp");
-                            session.setAttribute("customer",customerByUserId);
+                    if (allUser.isActive()) {
+                        isMatch = true;
+                        session.setAttribute("userobj", allUser);
+                        Customers customerByUserId = customerDAO.getCustomerByUserId(allUser.getId());
+                        if (allUser.getUser_type().equals("admin")) {
+                            resp.sendRedirect("admin.jsp");
+                            session.setAttribute("customer", customerByUserId);
+                            break;
+                        } else {
+                            OrderDAO orderDAO = new OrderDAO();
+                            int sizeNotTakenOrders = orderDAO.getAllNotTakenOrders(customerByUserId.getId()).size();
+                            if (sizeNotTakenOrders >= 3) {
+                                customerByUserId.setBanned(true);
+                                session.setAttribute("customer", customerByUserId);
+
+                                resp.sendRedirect("menu.jsp");
+                            } else {
+                                resp.sendRedirect("orders.jsp");
+                                session.setAttribute("customer", customerByUserId);
+                            }
+                            break;
                         }
-                        break;
                     }
                 } else {
                     isMatch = false;

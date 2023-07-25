@@ -37,6 +37,31 @@ public class FoodsDAO {
         return foods;
     }
 
+    public List<Foods> getAllActiveFoods() {
+        List<Foods> foods = new ArrayList<>();
+        try {
+            Connection conn = DBConnect.getConn();
+            Statement statement = conn.createStatement();
+            String sql = "SELECT * FROM foods WHERE active =true";
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                Foods food = new Foods();
+                food.setId(resultSet.getInt(1));
+                food.setName(resultSet.getString(2));
+                food.setDetails(resultSet.getString(3));
+                food.setCategory(resultSet.getString(4));
+                food.setPrice(resultSet.getBigDecimal(5));
+                food.setActive(resultSet.getBoolean(6));
+                foods.add(food);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return foods;
+    }
+
     public boolean createFood(Foods food) {
         boolean isSuccess = false;
         try {
@@ -108,7 +133,7 @@ public class FoodsDAO {
     public boolean deleteFood(int id){
         boolean f= false;
         try{
-            String sql = "DELETE FROM foods WHERE id=?";
+            String sql = "DELETE FROM foods WHERE id = ?";
             Connection conn = DBConnect.getConn();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1,id);

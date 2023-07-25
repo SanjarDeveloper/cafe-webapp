@@ -168,9 +168,6 @@
                                     <option value="4" <c:if test="${rating eq 4}">selected</c:if>>4</option>
                                     <option value="5" <c:if test="${rating eq 5}">selected</c:if>>5</option>
                                 </select>
-
-                                <input type="submit" value="Submit Feedback"
-                                       class="btn btn-primary badge-pill btn-block">
                             </div>
                         </c:if>
 

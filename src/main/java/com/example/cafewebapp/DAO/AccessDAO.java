@@ -53,6 +53,27 @@ public class AccessDAO {
         }
         return users;
     }
+
+    public List<Users> getAllActiveUsers(){
+        List<Users> users = new ArrayList<>();
+        try{
+            Connection connection = DBConnect.getConn();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM users WHERE active = true");
+            while (resultSet.next()){
+                Users user = new Users();
+                user.setId(resultSet.getInt(1));
+                user.setUser_type(resultSet.getString(2));
+                user.setUsername(resultSet.getString(3));
+                user.setPassword(resultSet.getString(4));
+                user.setActive(resultSet.getBoolean(5));
+                users.add(user);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return users;
+    }
     public Users getUserById(int id) {
         Users user = null;
         try {

@@ -68,7 +68,7 @@ public class EditCustomerServlet extends HttpServlet {
                     user.setUser_type(user_type);
                     user.setUsername(username);
                     user.setPassword(password);
-                    user.setActive(true);
+                    user.setActive(Boolean.parseBoolean(active));
                     if (accessDAO.updateUser(user)) {
                         customer.setName(name);
                         customer.setContact(contact);

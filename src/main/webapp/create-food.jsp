@@ -43,7 +43,7 @@
                             <label>Category</label> <input type="text"
                                                             pattern="[a-zA-Z]+" required
                                                             class="form-control" id="InputCategory" aria-describedby="category"
-                                                            name="category" placeholder="fast-food">
+                                                            name="category" placeholder="fastfood">
                         </div>
                         <div class="form-group">
                             <label>Price</label> <input type="number"

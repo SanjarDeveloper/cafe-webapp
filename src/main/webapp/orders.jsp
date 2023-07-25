@@ -147,20 +147,14 @@
                 int numOfNotTakenOrders = orderDAO.getAllNotTakenOrders(customer.getId()).size();
                 session.setAttribute("numOfNotTakenOrders", numOfNotTakenOrders);
                 if (numOfNotTakenOrders == 1) {
-                    if (banStatus == null) {
                         customerDAO.minusAmountFromBalance(customer.getId(), 10.0);
                         banStatus = "1";
-                    }
                 } else if (numOfNotTakenOrders == 2) {
-                    if (banStatus.equals("1")) {
                         customerDAO.minusAmountFromBalance(customer.getId(), 10.0);
                         banStatus = "2";
-                    }
                 } else if (numOfNotTakenOrders >= 3) {
-                    if (banStatus.equals("2")) {
                         customerDAO.makeCustomerBanned(customer.getId());
                         banStatus = "banned";
-                    }
                 }
             }
 

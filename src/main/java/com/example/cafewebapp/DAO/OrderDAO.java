@@ -186,4 +186,23 @@ public class OrderDAO {
         }
         return isSuccess;
     }
+
+    public boolean deleteOrder(int id){
+        boolean f= false;
+        try{
+            String sql = "DELETE FROM orders WHERE id = ?";
+            Connection conn = DBConnect.getConn();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1,id);
+
+            int i = ps.executeUpdate();
+            if(i == 1){
+                f = true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return f;
+    }
+
 }

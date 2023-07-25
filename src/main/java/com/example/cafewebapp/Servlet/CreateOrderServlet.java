@@ -62,7 +62,7 @@ public class CreateOrderServlet extends HttpServlet {
                             isSuccess = createOrderDetails();
                         }
                     } else {
-                        succMsg = "You do not enough bonus!";
+                        succMsg = "You do not have enough bonus!";
                     }
                 }
             }else {
